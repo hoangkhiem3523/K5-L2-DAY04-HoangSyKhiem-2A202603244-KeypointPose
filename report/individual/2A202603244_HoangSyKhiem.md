@@ -37,7 +37,7 @@ Rê chuột vào đúng điểm cần đổi rồi bấm `Q` (`occluded`) hoặc
 | `occluded` | 3 | 6 | 0 | 1 | |
 | `back` | 2 | 4 | 1 | 0 | |
 | `small` | 1 | 2 | 0 | 0 | |
-| `crowd` | 1 | 2 | 2 | 0 | |
+| `crowd` | 1 | 3 | 1 | 0 | |
 | `faces` | 8 | 8 | — | 0 | |
 
 - Số ảnh người đã xong ở mốc phút 105: 10 / 10 (hoàn thành đủ 12/12 ảnh trong ~62 phút)
@@ -66,7 +66,7 @@ Mã lỗi dùng đúng một trong: `lr_swap`, `vis_flag`, `position`, `missing`
 |---|---|---|---|---|---|
 | `face_219250.jpg` | Face #1 (kính râm) | 8 điểm mắt (`left_eye_*`, `right_eye_*`) | `vis_flag` | Ban đầu để `v = 2`, rà lại thấy đeo kính râm nên đổi sang `occluded` (`v = 1`). | Có |
 | `000000508269.jpg` | Person #1 | `left_ankle`, `right_ankle` | `ok` | Kiểm tra lại cảnh báo ngược phía: do tư thế chân vặn/chéo khi chạy, không phải `lr_swap`. | Không cần sửa |
-| `000000461002.jpg` | Person #2 (`back`) | `hip`, `knee`, `ankle` | `ok` | Kiểm tra lại cảnh báo ngược phía: đúng trái/phải theo tư thế vặn người. | Không cần sửa |
+| `000000461002.jpg` | Person #1 (`back`) | `hip`, `knee`, `ankle` | `ok` | Kiểm tra lại cảnh báo ngược phía: đúng trái/phải theo tư thế vặn người. | Không cần sửa |
 | `000000309169.jpg` | Person #2 (`crowd`) | `hip`, `knee`, `ankle` | `ok` | Kiểm tra lại cảnh báo ngược phía: đúng trái/phải theo tư thế người. | Không cần sửa |
 | `000000056651.jpg` | Person #1 (`occluded`) | `wrist`, khớp sát biên | `ok` | Kiểm tra lại cảnh báo: tay vắt chéo và khớp nằm sát biên ảnh thực tế. | Không cần sửa |
 | | | | | | |
@@ -101,10 +101,10 @@ Dán phần **TÓM TẮT** in ra từ `src/check_submission.py`:
 
 ```text
 - File person: HoangSyKhiem_persons.zip
-  Số ảnh: 12 · số skeleton `person`: 19 · mỗi annotation 51 số
-  Skeleton theo ảnh: 000000021235=1, 000000056651=2, 000000078170=2, 000000106051=2, 000000196283=1, 000000240340=1, 000000261732=1, 000000297227=2, 000000309169=2, 000000393909=2, 000000461002=2, 000000508269=1
-  Cờ v: v=2 246 (76%) · v=1 51 (16%) · v=0 26 (8%)
-  num_keypoints trung bình: 15.6
+  Số ảnh: 12 · số skeleton `person`: 20 · mỗi annotation 51 số
+  Skeleton theo ảnh: 000000021235=1, 000000056651=2, 000000078170=2, 000000106051=2, 000000196283=1, 000000240340=1, 000000261732=1, 000000297227=2, 000000309169=3, 000000393909=2, 000000461002=2, 000000508269=1
+  Cờ v: v=2 261 (77%) · v=1 53 (16%) · v=0 26 (8%)
+  num_keypoints trung bình: 15.7
 - File face: HoangSyKhiem_faces.zip
   Số ảnh: 8 · số skeleton `face`: 8 · mỗi annotation 39 số
   Skeleton theo ảnh: face_155465=1, face_168953=1, face_185015=1, face_219250=1, face_223746=1, face_3348=1, face_380639=1, face_79367=1
@@ -117,7 +117,7 @@ Kết quả: ĐẠT (đọc lại từng cảnh báo ở trên)
 
 Các `[CẢNH BÁO]` còn giữ nguyên và lý do:
 
-- `000000056651.jpg #1` (`wrist`), `000000309169.jpg #2` (`hip, knee, ankle`), `000000461002.jpg #2` (`hip, knee, ankle`), `000000508269.jpg #1` (`ankle`): đã kiểm tra lại trên ảnh gốc, đây là tư thế vặn người / tay chân bắt chéo thật nên cặp điểm trái/phải chéo phía nhau, không phải lỗi `lr_swap`.
+- `000000056651.jpg #1` (`wrist`), `000000309169.jpg #2` (`hip, knee, ankle`), `000000461002.jpg #1` (`hip, knee, ankle`), `000000508269.jpg #1` (`ankle`): đã kiểm tra lại trên ảnh gốc, đây là tư thế vặn người / tay chân bắt chéo thật nên cặp điểm trái/phải chéo phía nhau, không phải lỗi `lr_swap`.
 - `000000056651.jpg #1` (`left_shoulder` `v=2` tại `(639, 310)`, `left_knee` `v=1` tại `(489, 640)`, `right_knee` `v=1` tại `(508, 640)`): điểm khớp nằm ngay sát biên ảnh thực tế nên giữ nguyên.
 
 ## 6. Ảnh chụp màn hình
