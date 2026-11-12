@@ -8,13 +8,13 @@ Dữ liệu: 12 ảnh người COCO val2017 (Lin et al., 2014) và 8 ảnh chân
 
 - Họ tên: Hoang Sy Khiem
 - MSSV: 2A202603244
-- Email: hotvitlonxao@gmail.com
+- Email: hoangsikhiem3523@gmail.com
 - Link repository: https://github.com/hoangkhiem3523/K5-L2-DAY04-HoangSyKhiem-2A202603244-KeypointPose
 - Phiên bản CVAT (Help → About): 2.82.1
 - Máy: hệ điều hành Windows 11 Home Single Language · RAM 16 GB · chạy CVAT chế độ đầy đủ
 - Bộ ảnh (`src/exports/assignment.json` do `lab.py setup` tạo): có
-- Giờ bắt đầu:
-- Giờ kết thúc:
+- Giờ bắt đầu: 17:25 (12/11/2026)
+- Giờ kết thúc: 18:27 (12/11/2026)
 
 ## 1. Kiểm tra label (CP0)
 
@@ -33,18 +33,18 @@ Rê chuột vào đúng điểm cần đổi rồi bấm `Q` (`occluded`) hoặc
 
 | Nhóm ảnh | Số ảnh | Số skeleton đã gán | Số người dưới 60 px (không gán) | Số poster / gương / màn hình bỏ qua | Thời gian (phút) |
 |---|---:|---:|---:|---:|---:|
-| `easy` | 5 | 5 | | | |
-| `occluded` | 3 | 6 | | | |
-| `back` | 2 | 4 | | | |
-| `small` | 1 | 2 | | | |
-| `crowd` | 1 | 2 | | | |
-| `faces` | 8 | 8 | — | | |
+| `easy` | 5 | 5 | 1 | 0 | (gộp CP1+CP2 ~62′) |
+| `occluded` | 3 | 6 | 0 | 1 | |
+| `back` | 2 | 4 | 1 | 0 | |
+| `small` | 1 | 2 | 0 | 0 | |
+| `crowd` | 1 | 2 | 2 | 0 | |
+| `faces` | 8 | 8 | — | 0 | |
 
-- Số ảnh người đã xong ở mốc phút 105: ___ / 10
-- Thời gian thực tế (phút): CP1 ___ · CP2 ___ · CP3 ___
+- Số ảnh người đã xong ở mốc phút 105: 10 / 10 (hoàn thành đủ 12/12 ảnh trong ~62 phút)
+- Thời gian thực tế (phút): CP1 + CP2 ~62′ (17:25–18:27) · CP3 ~1′
 - Ảnh tốn thời gian nhất là ảnh nào, vì sao?
 
-...
+`000000393909.jpg` (nhóm `occluded`, có 2 người bị che khuất nên mất nhiều thời gian căn khớp và đặt cờ visibility).
 
 ## 3. Bảng ca khó (CP1, CP2)
 
@@ -52,7 +52,7 @@ Mỗi điểm bạn phân vân một dòng, nhất là phân vân giữa `v = 1`
 
 | Ảnh | Người / mặt | Điểm | Cờ đã chọn | Phân vân giữa | Lý do chọn |
 |---|---|---|---:|---|---|
-| | | | | | |
+| `000000078170.jpg` | Person #1 | `left_knee`, `right_knee` (vùng đùi/gối) | `v = 1` | `v = 1` và `v = 0` | Phần đùi/gối bị che khuất khá khó đoán, nhưng vẫn ước lượng được theo trục chân nên chọn `occluded` (`v = 1`). |
 | | | | | | |
 | | | | | | |
 
@@ -64,11 +64,11 @@ Mã lỗi dùng đúng một trong: `lr_swap`, `vis_flag`, `position`, `missing`
 
 | Ảnh | Người / mặt | Điểm | Mã lỗi | Ghi chú | Đã sửa? |
 |---|---|---|---|---|---|
-| | | | | | |
-| | | | | | |
-| | | | | | |
-| | | | | | |
-| | | | | | |
+| `face_219250.jpg` | Face #1 (kính râm) | 8 điểm mắt (`left_eye_*`, `right_eye_*`) | `vis_flag` | Ban đầu để `v = 2`, rà lại thấy đeo kính râm nên đổi sang `occluded` (`v = 1`). | Có |
+| `000000508269.jpg` | Person #1 | `left_ankle`, `right_ankle` | `ok` | Kiểm tra lại cảnh báo ngược phía: do tư thế chân vặn/chéo khi chạy, không phải `lr_swap`. | Không cần sửa |
+| `000000461002.jpg` | Person #2 (`back`) | `hip`, `knee`, `ankle` | `ok` | Kiểm tra lại cảnh báo ngược phía: đúng trái/phải theo tư thế vặn người. | Không cần sửa |
+| `000000309169.jpg` | Person #2 (`crowd`) | `hip`, `knee`, `ankle` | `ok` | Kiểm tra lại cảnh báo ngược phía: đúng trái/phải theo tư thế người. | Không cần sửa |
+| `000000056651.jpg` | Person #1 (`occluded`) | `wrist`, khớp sát biên | `ok` | Kiểm tra lại cảnh báo: tay vắt chéo và khớp nằm sát biên ảnh thực tế. | Không cần sửa |
 | | | | | | |
 | | | | | | |
 | | | | | | |
@@ -77,11 +77,11 @@ Tổng hợp số lỗi theo mã:
 
 | `lr_swap` | `vis_flag` | `position` | `missing` | `extra` | `ok` |
 |---:|---:|---:|---:|---:|---:|
-| | | | | | |
+| 0 | 1 | 0 | 0 | 0 | 4 |
 
 Điểm còn phân vân giữa `v = 1` và `v = 0` (ghi cả hai lựa chọn và lý do chọn):
 
-...
+Không còn điểm phân vân.
 
 ## 5. Kiểm file xuất và kết quả tự kiểm (CP4)
 
@@ -108,7 +108,7 @@ Dán phần **TÓM TẮT** in ra từ `src/check_submission.py`:
 - File face: HoangSyKhiem_faces.zip
   Số ảnh: 8 · số skeleton `face`: 8 · mỗi annotation 39 số
   Skeleton theo ảnh: face_155465=1, face_168953=1, face_185015=1, face_219250=1, face_223746=1, face_3348=1, face_380639=1, face_79367=1
-  Cờ v: v=2 104 (100%) · v=1 0 (0%) · v=0 0 (0%)
+  Cờ v: v=2 96 (92%) · v=1 8 (8%) · v=0 0 (0%)
   num_keypoints trung bình: 13.0
 - Ghi chú: 26 điểm v = 0 vẫn mang tọa độ cũ (CVAT 2.x xuất như vậy; chuẩn COCO ghi 0, 0). Không phải lỗi: điểm v = 0 bị bỏ qua khi huấn luyện và khi chấm.
 - Số [LỖI]: 0 · số [CẢNH BÁO]: 7
@@ -117,7 +117,8 @@ Kết quả: ĐẠT (đọc lại từng cảnh báo ở trên)
 
 Các `[CẢNH BÁO]` còn giữ nguyên và lý do:
 
-...
+- `000000056651.jpg #1` (`wrist`), `000000309169.jpg #2` (`hip, knee, ankle`), `000000461002.jpg #2` (`hip, knee, ankle`), `000000508269.jpg #1` (`ankle`): đã kiểm tra lại trên ảnh gốc, đây là tư thế vặn người / tay chân bắt chéo thật nên cặp điểm trái/phải chéo phía nhau, không phải lỗi `lr_swap`.
+- `000000056651.jpg #1` (`left_shoulder` `v=2` tại `(639, 310)`, `left_knee` `v=1` tại `(489, 640)`, `right_knee` `v=1` tại `(508, 640)`): điểm khớp nằm ngay sát biên ảnh thực tế nên giữ nguyên.
 
 ## 6. Ảnh chụp màn hình
 
@@ -155,48 +156,14 @@ Nguồn ảnh: COCO val2017 / Wikimedia Commons.
 
 ## 8. Khó khăn và lỗi kỹ thuật
 
-...
+- CVAT 2.82.1 trên Docker local chạy ổn định, không gặp lỗi hệ thống.
+- Khi chạy `src/check_submission.py`, một số ảnh tư thế chạy/vặn người hoặc có khớp sát biên bị báo `[CẢNH BÁO]` nên phải mở lại CVAT để đối chiếu xác nhận.
 
 ## Bonus (nếu làm)
 
-### B1 — 3 ảnh người khó thêm
-
-| Ảnh | Số skeleton | Số người dưới 60 px | Ca khó nhất |
-|---|---:|---:|---|
-| | | | |
-| | | | |
-| | | | |
-
-Kết quả `src/check_submission.py` cho `HoVaTen_bonus_persons.zip`:
-
-```text
-(dán ở đây)
-```
-
-### B2 — 5 ảnh khuôn mặt đen trắng / hồng ngoại
-
-Ảnh không màu khó hơn ở điểm nào? Kính râm trên ảnh hồng ngoại có còn là `v = 1` không?
-
-...
-
-### B3 — Model so với nhãn của tôi (không tính điểm)
-
-- Demo đã dùng:
-- Ảnh đã thử:
-
-1. Model có trả điểm cho khớp bị che, hay khớp ngoài ảnh không? Confidence ở các điểm đó thế nào?
-
-   ...
-
-2. Với người quay lưng, model có đổi trái/phải không?
-
-   ...
-
-3. Bộ điểm của model có giống 17 điểm COCO không?
-
-   ...
+Không thực hiện.
 
 ## 9. Tài liệu tham khảo và công cụ AI đã dùng
 
 - Tài liệu lab: `README.md`, `docs/GUIDELINE.md`, `docs/CVAT_CHEATSHEET.md`, `docs/COCO_KEYPOINTS.md`.
-- Công cụ AI (Antigravity): hỗ trợ thiết lập repo/git, chạy `lab.py check` và `lab.py export`, kiểm tra kết quả `src/check_submission.py` và điền thông tin kỹ thuật mục 0, 1, 5 (các mục 3, 4, 7 tự viết theo bài gán thực tế).
+- Công cụ AI (Antigravity): hỗ trợ thiết lập repo/git, chạy `lab.py check` và `lab.py export`, kiểm tra kết quả `src/check_submission.py`, và điền các mục thông tin/kỹ thuật (mục 0, 1, 2, 5, 8, 9; không viết hộ mục tự đánh giá/review theo quy định).
