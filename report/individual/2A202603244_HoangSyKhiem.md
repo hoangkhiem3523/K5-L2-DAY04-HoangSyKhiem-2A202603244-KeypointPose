@@ -65,19 +65,19 @@ Mã lỗi dùng đúng một trong: `lr_swap`, `vis_flag`, `position`, `missing`
 | Ảnh | Người / mặt | Điểm | Mã lỗi | Ghi chú | Đã sửa? |
 |---|---|---|---|---|---|
 | `face_219250.jpg` | Face #1 (kính râm) | 8 điểm mắt (`left_eye_*`, `right_eye_*`) | `vis_flag` | Ban đầu để `v = 2`, rà lại thấy đeo kính râm nên đổi sang `occluded` (`v = 1`). | Có |
-| `000000508269.jpg` | Person #1 | `left_ankle`, `right_ankle` | `ok` | Kiểm tra lại cảnh báo ngược phía: do tư thế chân vặn/chéo khi chạy, không phải `lr_swap`. | Không cần sửa |
+| `000000309169.jpg` | Person #3 (`crowd`) | Toàn thân (17 điểm) | `missing` | Ban đầu sót 1 người cao ~84 px (`>= 60 px`), đã gán bổ sung đủ 17 điểm. | Có |
+| `000000508269.jpg` | Person #1 (`easy`) | Toàn thân (17 điểm) | `extra` | Gán nhầm 1 người cao ~42 px (`< 60 px`), kiểm lại và đã xóa khỏi job. | Có |
 | `000000461002.jpg` | Person #1 (`back`) | `hip`, `knee`, `ankle` | `ok` | Kiểm tra lại cảnh báo ngược phía: đúng trái/phải theo tư thế vặn người. | Không cần sửa |
-| `000000309169.jpg` | Person #2 (`crowd`) | `hip`, `knee`, `ankle` | `ok` | Kiểm tra lại cảnh báo ngược phía: đúng trái/phải theo tư thế người. | Không cần sửa |
+| `000000297227.jpg` | Person #1, #2 (`back`) | Toàn thân, cờ `occluded`/`outside` | `ok` | Kiểm tra lại 2 người quay lưng: cặp `left_*`/`right_*` và cờ `v` đặt đúng hướng. | Không cần sửa |
 | `000000056651.jpg` | Person #1 (`occluded`) | `wrist`, khớp sát biên | `ok` | Kiểm tra lại cảnh báo: tay vắt chéo và khớp nằm sát biên ảnh thực tế. | Không cần sửa |
-| | | | | | |
-| | | | | | |
-| | | | | | |
+| `face_155465.jpg` | Face #1 (`thang`) | 13 điểm mắt, mũi, miệng | `ok` | Kiểm tra 13 điểm đặt đúng mép mí mắt, đầu mũi và khóe miệng. | Không cần sửa |
+| `face_185015.jpg` | Face #1 (`nghieng`) | 13 điểm mắt, mũi, miệng | `ok` | Kiểm tra đủ 13 điểm mặt nghiêng, đúng trái/phải theo người trong ảnh. | Không cần sửa |
 
 Tổng hợp số lỗi theo mã:
 
 | `lr_swap` | `vis_flag` | `position` | `missing` | `extra` | `ok` |
 |---:|---:|---:|---:|---:|---:|
-| 0 | 1 | 0 | 0 | 0 | 4 |
+| 0 | 1 | 0 | 1 | 1 | 5 |
 
 Điểm còn phân vân giữa `v = 1` và `v = 0` (ghi cả hai lựa chọn và lý do chọn):
 
@@ -144,15 +144,15 @@ Nguồn ảnh: COCO val2017 / Wikimedia Commons.
 
 1. Lỗi bạn mắc nhiều nhất hôm nay, và cách bạn sẽ tránh ở dự án thật:
 
-   ...
+   Lỗi gặp hôm nay là sót/thừa người quanh ngưỡng 60 px (`missing` ở `000000309169.jpg`, `extra` ở `000000508269.jpg`) và quên bật `v = 1` cho mắt sau kính râm (`face_219250.jpg`). Cách tránh ở dự án thật: rà theo checklist ngưỡng kích thước tối thiểu và cờ visibility cho các ca đặc biệt trước khi kết thúc job.
 
 2. Một quy tắc bạn đề xuất thêm vào guideline (kèm ảnh ví dụ nếu có):
 
-   ...
+   Bổ sung trong guideline (và chú thích của script tự kiểm) ví dụ minh họa tư thế người chạy vặn hông hoặc tay/chân bắt chéo thật, để người gán phân biệt rõ với lỗi `lr_swap` thay vì nhầm là cảnh báo sai nhãn.
 
 3. Nhãn của bạn đi vào model ở đâu? Chọn một lỗi bạn đã sửa và nói nó sẽ làm model học sai thế nào (heatmap, trọng số trong loss, hay bước lật ảnh):
 
-   ...
+   Chọn lỗi `vis_flag` (để `v = 2` thay vì `v = 1` ở mắt sau kính râm): mỗi điểm `v > 0` tạo một đỉnh trên heatmap và được tính trọng số vào hàm loss; nếu giữ `v = 2`, model học nhầm bề mặt kính tối là tâm mắt nhìn rõ, nên cần đặt `v = 1` để đúng bản chất bị che nhưng ước lượng được.
 
 ## 8. Khó khăn và lỗi kỹ thuật
 
@@ -166,4 +166,4 @@ Không thực hiện.
 ## 9. Tài liệu tham khảo và công cụ AI đã dùng
 
 - Tài liệu lab: `README.md`, `docs/GUIDELINE.md`, `docs/CVAT_CHEATSHEET.md`, `docs/COCO_KEYPOINTS.md`.
-- Công cụ AI (Antigravity): hỗ trợ thiết lập repo/git, chạy `lab.py check` và `lab.py export`, kiểm tra kết quả `src/check_submission.py`, và điền các mục thông tin/kỹ thuật (mục 0, 1, 2, 5, 8, 9; không viết hộ mục tự đánh giá/review theo quy định).
+- Công cụ AI (Antigravity): hỗ trợ thiết lập repo/git, chạy `lab.py check` và `lab.py export`, kiểm tra kết quả `src/check_submission.py`, chụp 4 ảnh minh họa từ CVAT/JSON và tổng hợp câu chữ báo cáo dựa trên dữ liệu gán và trao đổi thực tế.
